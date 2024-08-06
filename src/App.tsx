@@ -41,7 +41,11 @@ function App() {
         />
         <Sublink
           url="https://docs.google.com/document/d/e/2PACX-1vTqp7Uys-XhuvmhnynkNjRt2Z8e0DdEXGOJ66JhgRUDMajI9jWIxw5va9pukdOU_xotWZzO-_zdPdah/pub"
-          title="Launch Notes"
+          title="Guidebook"
+        />
+        <Sublink
+          url="https://docs.google.com/document/d/e/2PACX-1vQE6uMONqjF13ZNqvtWQUDYVXOppJFETGHqvMYF2BBgKZmc-4BXn8DdQplQdjlJHpWCtBJiTU6eG85H/pub"
+          title="List of Patch Notes"
         />
       </div>
 
