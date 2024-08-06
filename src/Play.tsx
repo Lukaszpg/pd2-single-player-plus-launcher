@@ -4,6 +4,7 @@ import { download } from "./util/download";
 import { useEffect, useState } from "react";
 import { exists, readTextFile } from "@tauri-apps/api/fs";
 import { message } from "@tauri-apps/api/dialog";
+import { DLL_STRING, DLL_URL, JSON_STRING, JSON_URL, MPQ_STRING, MPQ_URL, PLUGY_STRING } from "./constants";
 
 export default function Play() {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -16,26 +17,20 @@ export default function Play() {
   });
 
   const play = new Command("PlugY");
-  const pd2dataLink =
-    "https://github.com/synpoox/pd2-reawakening/releases/latest/download/pd2data.mpq";
-  const bhLink =
-    "https://github.com/synpoox/pd2-reawakening/releases/latest/download/BH.dll";
-  const pd2ReawakeningJsonLink =
-    "https://raw.githubusercontent.com/synpoox/pd2-reawakening/main/pd2-reawakening.json";
 
   async function downloadAllFiles() {
     const resourcePath = await resourceDir();
     const fixedPath = resourcePath.replace("\\\\?\\", "");
 
-    await fetch(pd2ReawakeningJsonLink)
+    await fetch(JSON_URL)
       .then((response) => response.json())
       .then(async (data) => {
         if (currentVersion !== data.version) {
           setIsDownloading(true);
-          await download(pd2dataLink, `${fixedPath}/pd2data.mpq`);
-          await download(bhLink, `${fixedPath}/BH.dll`);
+          await download(MPQ_URL, `${fixedPath}/${MPQ_STRING}`);
+          await download(DLL_URL, `${fixedPath}/${DLL_STRING}`);
           await download(
-            pd2ReawakeningJsonLink,
+            JSON_URL,
             `${fixedPath}/pd2-reawakening.json`
           );
           setFileExists((prevState) => ({
@@ -53,28 +48,28 @@ export default function Play() {
   async function checkIfJsonExists() {
     const resourcePath = await resourceDir();
     const fixedPath = resourcePath.replace("\\\\?\\", "");
-    const jsonExistStatus = await exists(`${fixedPath}\pd2-reawakening.json`);
+    const jsonExistStatus = await exists(`${fixedPath}\\${JSON_STRING}`);
     setFileExists((prevState) => ({ ...prevState, json: jsonExistStatus }));
   }
 
   async function checkIfMpqExists() {
     const resourcePath = await resourceDir();
     const fixedPath = resourcePath.replace("\\\\?\\", "");
-    const mpqExistStatus = await exists(`${fixedPath}\pd2data.mpq`);
+    const mpqExistStatus = await exists(`${fixedPath}\\${MPQ_STRING}`);
     setFileExists((prevState) => ({ ...prevState, mpq: mpqExistStatus }));
   }
 
   async function checkIfDllExists() {
     const resourcePath = await resourceDir();
     const fixedPath = resourcePath.replace("\\\\?\\", "");
-    const dllExistStatus = await exists(`${fixedPath}\BH.dll`);
+    const dllExistStatus = await exists(`${fixedPath}\\${DLL_STRING}`);
     setFileExists((prevState) => ({ ...prevState, dll: dllExistStatus }));
   }
 
   async function checkIfPlugyExists() {
     const resourcePath = await resourceDir();
     const fixedPath = resourcePath.replace("\\\\?\\", "");
-    const plugyExistStatus = await exists(`${fixedPath}\PlugY.exe`);
+    const plugyExistStatus = await exists(`${fixedPath}\\${PLUGY_STRING}`);
     setFileExists((prevState) => ({ ...prevState, plugy: plugyExistStatus }));
   }
 
@@ -88,7 +83,7 @@ export default function Play() {
       const resourcePath = await resourceDir();
       const fixedPath = resourcePath.replace("\\\\?\\", "");
       const currentVersionJson = await readTextFile(
-        `${fixedPath}\pd2-reawakening.json`
+        `${fixedPath}\\${JSON_STRING}`
       );
 
       setCurrentVersion(JSON.parse(currentVersionJson).version);
@@ -110,7 +105,7 @@ export default function Play() {
         const resourcePath = await resourceDir();
         const fixedPath = resourcePath.replace("\\\\?\\", "");
 
-        await fetch(pd2ReawakeningJsonLink)
+        await fetch(JSON_URL)
           .then((response) => response.json())
           .then(async (data) => {
             if (
@@ -120,11 +115,11 @@ export default function Play() {
               !fileExists.mpq
             ) {
               setIsDownloading(true);
-              await download(pd2dataLink, `${fixedPath}/pd2data.mpq`);
-              await download(bhLink, `${fixedPath}/BH.dll`);
+              await download(MPQ_URL, `${fixedPath}/${MPQ_STRING}`);
+              await download(DLL_URL, `${fixedPath}/${DLL_STRING}`);
               await download(
-                pd2ReawakeningJsonLink,
-                `${fixedPath}/pd2-reawakening.json`
+                JSON_URL,
+                `${fixedPath}/${JSON_STRING}`
               );
               setFileExists((prevState) => ({
                 ...prevState,
@@ -139,7 +134,7 @@ export default function Play() {
 
         if (!fileExists.plugy) {
           await message(
-            "PlugY.exe not found. \n\nMake sure this launcher is installed in the same folder as PlugY.exe.",
+            `${PLUGY_STRING} not found. \n\nMake sure this launcher is installed in the same folder as ${PLUGY_STRING}.`,
             { title: "Error", type: "error" }
           );
         } else {

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import Sublink from "./components/Sublink";
 import Play from "./Play";
+import { getVersion } from "@tauri-apps/api/app";
+import { JSON_URL } from "./constants";
 
 type Json = {
   date: string;
@@ -11,13 +13,17 @@ type Json = {
 
 function App() {
   const [json, setJson] = useState<Json>();
-  const pd2ReawakeningJsonLink =
-    "https://raw.githubusercontent.com/synpoox/pd2-reawakening/main/pd2-reawakening.json";
+  const [appVersion, setAppVersion] = useState("");
 
   const getGithubJson = async () => {
-    fetch(pd2ReawakeningJsonLink)
+    fetch(JSON_URL)
       .then((response) => response.json())
       .then((data) => setJson(data));
+  };
+
+  const getAppVersion = async () => {
+    const appVersion = await getVersion();
+    setAppVersion(appVersion);
   };
 
   useEffect(() => {
@@ -27,6 +33,7 @@ function App() {
         event.preventDefault();
       };
     }
+    getAppVersion();
     getGithubJson();
   }, []);
 
@@ -70,6 +77,7 @@ function App() {
         </a>
         <Play />
       </div>
+      <div className="absolute bottom-0 right-0 p-2"><p className="text-xs opacity-20">v{appVersion}</p></div>
     </div>
   );
 }
