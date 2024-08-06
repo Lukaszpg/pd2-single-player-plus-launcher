@@ -6,8 +6,8 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "pd2-reawakening-launcher",
-    "version": "0.1.0"
+    "productName": "PD2 Reawakening Launcher",
+    "version": "0.2.0"
   },
   "tauri": {
     "allowlist": {
