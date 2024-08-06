@@ -3,6 +3,7 @@ import { resourceDir } from "@tauri-apps/api/path";
 import { download } from "./util/download";
 import { useEffect, useState } from "react";
 import { exists, readTextFile } from "@tauri-apps/api/fs";
+import { message } from "@tauri-apps/api/dialog";
 
 export default function Play() {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -11,6 +12,7 @@ export default function Play() {
     json: false,
     mpq: false,
     dll: false,
+    plugy: false,
   });
 
   const play = new Command("PlugY");
@@ -28,7 +30,6 @@ export default function Play() {
     await fetch(pd2ReawakeningJsonLink)
       .then((response) => response.json())
       .then(async (data) => {
-
         if (currentVersion !== data.version) {
           setIsDownloading(true);
           await download(pd2dataLink, `${fixedPath}/pd2data.mpq`);
@@ -37,11 +38,12 @@ export default function Play() {
             pd2ReawakeningJsonLink,
             `${fixedPath}/pd2-reawakening.json`
           );
-          setFileExists({
+          setFileExists((prevState) => ({
+            ...prevState,
             dll: true,
             json: true,
             mpq: true,
-          });
+          }));
           setIsDownloading(false);
           setCurrentVersion(data.version);
         }
@@ -69,10 +71,18 @@ export default function Play() {
     setFileExists((prevState) => ({ ...prevState, dll: dllExistStatus }));
   }
 
+  async function checkIfPlugyExists() {
+    const resourcePath = await resourceDir();
+    const fixedPath = resourcePath.replace("\\\\?\\", "");
+    const plugyExistStatus = await exists(`${fixedPath}\PlugY.exe`);
+    setFileExists((prevState) => ({ ...prevState, plugy: plugyExistStatus }));
+  }
+
   async function getCurrentVersion() {
     checkIfJsonExists();
     checkIfDllExists();
     checkIfMpqExists();
+    checkIfPlugyExists();
 
     if (fileExists.json) {
       const resourcePath = await resourceDir();
@@ -103,7 +113,6 @@ export default function Play() {
         await fetch(pd2ReawakeningJsonLink)
           .then((response) => response.json())
           .then(async (data) => {
-
             if (
               currentVersion !== data.version ||
               !fileExists.dll ||
@@ -117,17 +126,25 @@ export default function Play() {
                 pd2ReawakeningJsonLink,
                 `${fixedPath}/pd2-reawakening.json`
               );
-              setFileExists({
+              setFileExists((prevState) => ({
+                ...prevState,
                 dll: true,
                 json: true,
                 mpq: true,
-              });
+              }));
               setIsDownloading(false);
               setCurrentVersion(data.version);
             }
           });
 
-        play.execute();
+        if (!fileExists.plugy) {
+          await message(
+            "PlugY.exe not found. \n\nMake sure this launcher is installed in the same folder as PlugY.exe.",
+            { title: "Error", type: "error" }
+          );
+        } else {
+          play.execute();
+        }
       }}
       disabled={isDownloading}
     >
@@ -137,7 +154,7 @@ export default function Play() {
         <>
           <h2 className="mb-3 text-2xl font-semibold min-w-44">Play</h2>
           <p className="m-0 max-w-[30ch] text-sm opacity-40">
-            PD2: Reawakening
+            PD2 SP: Reawakening
           </p>
         </>
       )}

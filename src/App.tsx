@@ -4,6 +4,7 @@ import Sublink from "./components/Sublink";
 import Play from "./Play";
 
 type Json = {
+  date: string;
   latestPatchNotes: string;
   version: string;
 };
@@ -57,7 +58,7 @@ function App() {
           rel="noopener noreferrer"
         >
           <h2 className="mb-3 text-2xl font-semibold">Latest Patch Notes</h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-40">{json?.version}</p>
+          <p className="m-0 max-w-[30ch] text-sm opacity-40">v{json?.version} - {json?.date}</p>
         </a>
         <Play />
       </div>
