@@ -21,6 +21,12 @@ function App() {
   };
 
   useEffect(() => {
+    // prevent right click menu on prod
+    if (!import.meta.env.DEV) {
+      document.oncontextmenu = (event) => {
+        event.preventDefault();
+      };
+    }
     getGithubJson();
   }, []);
 
@@ -58,7 +64,9 @@ function App() {
           rel="noopener noreferrer"
         >
           <h2 className="mb-3 text-2xl font-semibold">Latest Patch Notes</h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-40">v{json?.version} - {json?.date}</p>
+          <p className="m-0 max-w-[30ch] text-sm opacity-40">
+            v{json?.version} - {json?.date}
+          </p>
         </a>
         <Play />
       </div>
