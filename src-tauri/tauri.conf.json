@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "PD2 Reawakening Launcher",
-    "version": "0.2.11"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -73,7 +73,7 @@
       "publisher": "Synpoo" 
     },
     "updater": {
-      "active": true,
+      "active": false,
       "endpoints": [
         "https://gist.githubusercontent.com/synpoox/2fb7641ad580816732dee135d6df4798/raw/"
       ],
