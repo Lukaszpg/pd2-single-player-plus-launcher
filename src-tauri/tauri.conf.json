@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "PD2 Reawakening Launcher",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "tauri": {
     "allowlist": {
@@ -46,13 +46,16 @@
       },
       "app": {
         "all": true
+      },
+      "window": {
+        "all": true
       }
     },
     "windows": [
       {
         "title": "PD2 Reawakening Launcher",
-        "width": 670,
-        "height": 410,
+        "width": 820,
+        "height": 540,
         "resizable": false
       }
     ],
