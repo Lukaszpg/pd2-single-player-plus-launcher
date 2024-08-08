@@ -15,5 +15,5 @@ If you've already played PlugY or any other PD2 single player mod, your current 
 1. Install [PD2-PlugY](https://github.com/BetweenWalls/PD2-PlugY)
 1. Download the [Latest Release](https://github.com/synpoox/pd2-reawakening-launcher/releases/latest) of PD2 Reawakening Launcher.
 1. Install in the same folder that `PlugY.exe` is located in.
-1. Run `pd2-reawakening-launcher.exe` as Administrator.
+1. Run `PD2Reawakening Launcher.exe` as Administrator.
 1. Go to Akara and look for an item with Alkor's quest potion. If it's there, then the mod was installed successfully.
