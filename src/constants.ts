@@ -14,3 +14,4 @@ export const JSON_STRING = "pd2-reawakening.json";
 export const LAUNCHER_SETTINGS_STRING = "pd2-reawakening-launcher.json";
 export const MPQ_STRING = "pd2data.mpq";
 export const PLUGY_STRING = "PlugY.exe";
+export const PROJECT_DIABLO_SETTINGS_STRING = "ProjectDiablo.json";
