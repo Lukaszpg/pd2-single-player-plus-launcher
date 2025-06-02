@@ -19,7 +19,7 @@ Requirements:
 a) With PlugY:
 
 1. Copy your Diablo 2 game with Project Diablo 2 mod installed to a new directory.
-2. **OPTIONAL** - Install PD2 Plugy for SP by BetweenWalls: https://github.com/BetweenWalls/PD2-PlugY#pd2-plugy.
+2. Install PD2 Plugy for SP by BetweenWalls: https://github.com/BetweenWalls/PD2-PlugY#pd2-plugy.
 
    **WARNING - The materials tab introduced in S11 will not work with Plugy!**
    
