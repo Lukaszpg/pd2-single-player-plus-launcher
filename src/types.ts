@@ -8,7 +8,7 @@ export type LauncherJson = {
 };
 
 export type LauncherSettings = {
-  craftingLeague: boolean;
+  isPlugy: boolean;
 };
 
 export type Json = {

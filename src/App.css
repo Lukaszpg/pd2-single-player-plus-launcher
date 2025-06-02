@@ -31,3 +31,11 @@ body {
     text-wrap: balance;
   }
 }
+
+.mantine-Modal-title {
+	color: white;
+}
+
+.mantine-TextInput-label {
+	color: white;
+}

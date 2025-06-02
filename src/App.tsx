@@ -26,7 +26,7 @@ function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [localJson, setLocalJson] = useState<Json | null>();
   const [launcherSettings, setLauncherSettings] = useState<LauncherSettings>({
-    craftingLeague: false,
+    isPlugy: false,
   });
   const [isDownloading, setIsDownloading] = useState(false);
   const [appVersion, setAppVersion] = useState("");
@@ -41,7 +41,7 @@ function App() {
     );
 
     const newLauncherSettings: LauncherSettings = {
-      craftingLeague: false,
+      isPlugy: false,
     };
 
     if (launcherSettingsExists) {
@@ -66,7 +66,7 @@ function App() {
     if (latestJsonData) {
       if (readLocalJson.version !== latestJsonData.version) {
         setIsDownloading(true);
-        await downloadAllFiles(launcherSettings);
+        await downloadAllFiles();
         setIsDownloading(false);
       }
     }
@@ -86,7 +86,7 @@ function App() {
         await readLocalJson();
       } else {
         setIsDownloading(true);
-        await downloadAllFiles(launcherSettings);
+        await downloadAllFiles();
         setIsDownloading(false);
       }
 
@@ -108,9 +108,9 @@ function App() {
 
         <div className="relative grid place-items-center before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
           <h1 className="text-sm font-bold place-items-center">
-            Project Diablo 2 SP
+            Project Diablo 2
           </h1>
-          <h1 className="text-4xl font-bold place-items-center">Reawakening</h1>
+          <h1 className="text-4xl font-bold place-items-center">Single Player+</h1>
 
           <div className="mt-6 flex text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left space-x-2">
             {launcherJsonData?.sublinks.map((sublink, i) => (
@@ -133,7 +133,6 @@ function App() {
           </a>
           <Play
             latestJson={latestJsonData}
-            launcherSettings={launcherSettings}
             localJson={localJson}
             isDownloading={isDownloading}
             setIsDownloading={setIsDownloading}

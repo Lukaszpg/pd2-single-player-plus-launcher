@@ -1,9 +1,10 @@
 import {
   Button,
-  Checkbox,
   CSSProperties,
+  Checkbox,
   Modal,
   TextInput,
+  Group,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { LauncherSettings, ProjectDiabloSettings } from "../types";
@@ -34,17 +35,16 @@ const modalHeader: CSSProperties = {
 
 const checkboxDescription = (
   <div>
-    <p>Uniques, sets, and runewords are prevented from drops/creation</p>
     <p className="mt-2">
-      <span className="text-red-500">Warning</span>: Changing this too often has
-      potential to brick your characters/stash. Make sure to always backup!
+      <span className="text-red-500">Warning</span>: This setting HAS TO
+	  be checked if you want to play with PlugY, otherwise the game won't launch!
     </p>
   </div>
 );
 
 function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
   const [tempSettings, setTempSettings] = useState<LauncherSettings>({
-    craftingLeague: false,
+    isPlugy: false,
   });
   const [projectDiabloTempSettings, setProjectDiabloTempSettings] =
     useState<ProjectDiabloSettings>({
@@ -94,8 +94,8 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
         },
         other: {
           lng_file: "",
-          installpath: "C:\\Program Files (x86)\\PD2-Reawakening\\",
-          save_path: "C:\\Program Files (x86)\\PD2-Reawakening\\Save",
+          installpath: "C:\\Program Files (x86)\\PD2-Single-Player-Plus\\",
+          save_path: "C:\\Program Files (x86)\\PD2-Single-Player-Plus\\Save",
         },
       },
       pd2_game_settings: {
@@ -142,7 +142,7 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
 
     close();
     setIsDownloading(true);
-    await downloadAllFiles(tempSettings);
+    await downloadAllFiles();
     setIsDownloading(false);
   };
 
@@ -192,13 +192,13 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
         blur: 5,
       }}
     >
-      <Checkbox
-        checked={tempSettings.craftingLeague}
+	<Checkbox
+        checked={tempSettings.isPlugy}
         onChange={(e) =>
-          setTempSettings({ craftingLeague: e.currentTarget.checked })
+          setTempSettings({ isPlugy: e.currentTarget.checked })
         }
-        label="Crafting League"
-        color="red"
+        label="Play with PlugY"
+		styles={{ label: { color: 'white' } }}
         description={checkboxDescription}
       />
       <TextInput
@@ -208,23 +208,17 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
         value={projectDiabloTempSettings?.classic_game_settings.other.save_path}
         disabled
       />
-      <Button mt="8px" color="dark" onClick={changeSavePath}>
-        Change Save Path
+	  <Button mt="8px" onClick={changeSavePath}>
+	       Change Save Path
       </Button>
-      <div className="flex justify-end w-full pt-8">
-        <button
-          onClick={onClose}
-          className="group rounded-md border border-transparent p-2 m-2 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 min-w-20"
-        >
-          <p className="opacity-80">Cancel</p>
-        </button>
-        <button
-          onClick={onSave}
-          className="group rounded-md border border-transparent p-2 m-2 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 bg-neutral-800 min-w-20"
-        >
+	  <Group justify="right">
+        <Button onClick={onClose}>
+          <p>Cancel</p>
+        </Button>
+        <Button onClick={onSave}>
           <p className="opacity-80">Save</p>
-        </button>
-      </div>
+        </Button>
+		</Group>
     </Modal>
   );
 }

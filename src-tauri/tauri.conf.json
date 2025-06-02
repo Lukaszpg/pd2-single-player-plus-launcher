@@ -6,15 +6,15 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "PD2 Reawakening Launcher",
-    "version": "1.1.2"
+    "productName": "PD2 Single Player+ Launcher",
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
       "all": false,
       "shell": {
         "open": ".*",
-        "scope": [{ "name": "PlugY", "cmd": "$RESOURCE/PlugY.exe" }],
+        "scope": [{ "name": "PlugY", "cmd": "$RESOURCE/PlugY.exe", "args": ["-plugy"]}, { "name": "NotPlugy", "cmd": "$RESOURCE/Diablo II.exe", "args": ["-3dfx"]}],
         "sidecar": true,
         "execute": true
       },
@@ -25,8 +25,8 @@
         "all": true,
         "request": true,
         "scope": [
-          "https://github.com/synpoox/pd2-reawakening/releases/latest/download/*",
-          "https://raw.githubusercontent.com/synpoox/pd2-reawakening/main/pd2-reawakening.json"
+          "https://github.com/Lukaszpg/PD2-Single-Player-Plus-mod/releases/latest/download/*",
+          "https://raw.githubusercontent.com/Lukaszpg/PD2-Single-Player-Plus-mod/refs/heads/main/pd2-single-player-plus.json"
         ]
       },
       "fs": {
@@ -53,8 +53,8 @@
     },
     "windows": [
       {
-        "title": "PD2 Reawakening Launcher",
-        "width": 820,
+        "title": "PD2 Single Player+ Launcher",
+        "width": 600,
         "height": 540,
         "resizable": false
       }
@@ -65,7 +65,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "pd2-reawakening-launcher",
+      "identifier": "pd2-single-player-plus-launcher",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -73,7 +73,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "publisher": "Synpoo" 
+      "publisher": "MindH1ve" 
     },
     "updater": {
       "active": false,

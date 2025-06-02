@@ -1,8 +1,8 @@
 [package]
-name = "pd2-reawakening-launcher"
-version = "0.1.0"
-description = "PD2 Reawakening Launcher"
-authors = ["Synpoo"]
+name = "pd2-single-player-plus-launcher"
+version = "1.0.0"
+description = "PD2 Single Player+ Launcher"
+authors = ["MindH1ve"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -13,6 +13,7 @@ tauri-build = { version = "1", features = [] }
 [dependencies]
 tauri = { version = "1", features = [ "window-all", "app-all", "protocol-all", "dialog-all", "shell-execute", "http-all", "shell-sidecar", "process-exit", "path-all", "fs-all", "shell-open"] }
 serde = { version = "1", features = ["derive"] }
+tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 serde_json = "1"
 
 [features]
