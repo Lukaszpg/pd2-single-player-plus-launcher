@@ -21,7 +21,7 @@ a) With PlugY:
 1. Copy your Diablo 2 game with Project Diablo 2 mod installed to a new directory.
 2. **OPTIONAL** - Install PD2 Plugy for SP by BetweenWalls: https://github.com/BetweenWalls/PD2-PlugY#pd2-plugy.
 
-   **WARNING - The materials tab introduced in S11 tab will not work with Plugy!**
+   **WARNING - The materials tab introduced in S11 will not work with Plugy!**
    
 	2a. If you already have Plugy installed and played previous versions of this mod, please remove the contents of shared stash and create a new character.
 3. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher) of PD2 Single Player+ launcher.
