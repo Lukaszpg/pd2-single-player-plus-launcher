@@ -44,7 +44,7 @@ const checkboxDescription = (
 
 function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
   const [tempSettings, setTempSettings] = useState<LauncherSettings>({
-    isPlugy: false,
+    isPlugy: false
   });
   const [projectDiabloTempSettings, setProjectDiabloTempSettings] =
     useState<ProjectDiabloSettings>({

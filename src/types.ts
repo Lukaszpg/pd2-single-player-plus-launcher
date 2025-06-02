@@ -15,6 +15,7 @@ export type Json = {
   date: string;
   latestPatchNotes: string;
   version: string;
+  dataChecksum: string;
 };
 
 export type PlayType = {

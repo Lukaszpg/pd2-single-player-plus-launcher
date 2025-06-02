@@ -8,7 +8,10 @@ export const MPQ_URL =
   "https://github.com/Lukaszpg/PD2-Single-Player-Plus-mod/releases/latest/download/pd2data.mpq";
 export const LATEST_RELEASE_URL =
   "https://github.com/Lukaszpg/PD2-Single-Player-Plus-mod/releases/latest/download";
+export const LOOT_FILTER_URL = 
+  ""
 
+export const LOOT_FILTER_STRING = "loot.filter"
 export const DLL_STRING = "BH.dll";
 export const JSON_STRING = "pd2-single-player-plus.json";
 export const LAUNCHER_SETTINGS_STRING = "pd2-single-player-plus-launcher.json";

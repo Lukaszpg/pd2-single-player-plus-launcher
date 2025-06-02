@@ -7,6 +7,7 @@ import { Json, LauncherSettings } from "./types";
 import { downloadAllFiles } from "./util/downloadAll";
 import { fixedResourcePath } from "./util/fixedResourcePath";
 import { Loader } from "@mantine/core";
+import { calculateChecksum } from "./util/calculateChecksum";
 
 type PlayType = {
   latestJson: Json | null | undefined;
@@ -21,7 +22,7 @@ export default function Play({
   localJson,
   isDownloading,
   setIsDownloading,
-  readLocalJson,
+  readLocalJson
 }: PlayType) {
 	
 	const readLauncherSettings = async () => {
@@ -42,6 +43,7 @@ export default function Play({
     const mpqExists = await checkIfFileExists(MPQ_STRING);
     const plugyExists = await checkIfFileExists(PLUGY_STRING);
     const localJsonExists = await checkIfFileExists(JSON_STRING);
+	const currentChecksum = await calculateChecksum(MPQ_STRING);
 
     if (launcherSettings.isPlugy && !plugyExists) {
       await message(
@@ -57,7 +59,8 @@ export default function Play({
       dllExists &&
       mpqExists &&
       localJsonExists &&
-      localJson?.version === latestJson?.version
+      localJson?.version === latestJson?.version &&
+	  currentChecksum === latestJson?.dataChecksum
     ) {
 	  if(launcherSettings.isPlugy) {
         playPlugy.execute();

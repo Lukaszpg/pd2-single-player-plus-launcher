@@ -10,7 +10,7 @@ import {
   JSON_STRING,
   JSON_URL,
   LAUNCHER_JSON_URL,
-  LAUNCHER_SETTINGS_STRING,
+  LAUNCHER_SETTINGS_STRING
 } from "./constants";
 import Settings from "./components/Settings";
 import { MantineProvider } from "@mantine/core";
@@ -26,7 +26,7 @@ function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [localJson, setLocalJson] = useState<Json | null>();
   const [launcherSettings, setLauncherSettings] = useState<LauncherSettings>({
-    isPlugy: false,
+    isPlugy: false
   });
   const [isDownloading, setIsDownloading] = useState(false);
   const [appVersion, setAppVersion] = useState("");
@@ -41,7 +41,7 @@ function App() {
     );
 
     const newLauncherSettings: LauncherSettings = {
-      isPlugy: false,
+      isPlugy: false
     };
 
     if (launcherSettingsExists) {
