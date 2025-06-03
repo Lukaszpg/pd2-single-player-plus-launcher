@@ -11,6 +11,8 @@ Discord: https://discord.gg/CwN2s6AHSZ
 Requirements:
 
 - **CLEAN** installation of **Project Diablo 2** is required.
+  
+**As of now this launcher is for WINDOWS OS only. I will work on making this available on other operating systems.**
 
 ## Installation
 
