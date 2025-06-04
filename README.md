@@ -45,3 +45,12 @@ b) Without PlugY:
 6. **OPTIONAL** If you want to use the recommended loot filter, click "Use the recommended loot filter" checkbox.
 7. Save the settings. Click play button.
 8. Head to Akara and look for an item with Alkor's quest potion graphics. If it's there, mod was installed successfully. GLHF!
+
+## Troubleshooting
+
+1. I have launched the mod through PlugY exe, but it's not working with an error pictured below.
+
+![image](https://github.com/user-attachments/assets/5147e3cc-6e4b-49cd-9a65-bee7476d7dfb)
+
+**Solution:** Open PlugY.ini file in your ProjectD2 directory, look for `ActiveShiftClickLimit=1` and change it to `ActiveShiftClickLimit=0`. 
+
