@@ -54,3 +54,6 @@ b) Without PlugY:
 
 **Solution:** Open PlugY.ini file in your ProjectD2 directory, look for `ActiveShiftClickLimit=1` and change it to `ActiveShiftClickLimit=0`. 
 
+2. The launcher seems to be stuck on "Updating..." and the Play button is unavailable.
+
+**Solution:** Launch the `PD2 Single Player+ Launcher.exe` as admin. Make sure that anti-virus or firewall software is not blocking the connections.
