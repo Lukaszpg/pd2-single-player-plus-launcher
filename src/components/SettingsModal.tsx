@@ -95,7 +95,7 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
         other: {
           lng_file: "",
           installpath: "C:\\Program Files (x86)\\PD2-Single-Player-Plus\\",
-          save_path: "C:\\Program Files (x86)\\PD2-Single-Player-Plus\\Save",
+          save_path: "C:\\Program Files (x86)\\PD2-Single-Player-Plus\\Save\\",
         },
       },
       pd2_game_settings: {
@@ -135,6 +135,12 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
       path: `${path}\\${LAUNCHER_SETTINGS_STRING}`,
       contents: JSON.stringify(tempSettings),
     });
+	
+	//Fix for invalid save path
+	if(projectDiabloTempSettings.classic_game_settings.other.save_path.substr(projectDiabloTempSettings.classic_game_settings.other.save_path.length - 1) !== "\\") {
+		projectDiabloTempSettings.classic_game_settings.other.save_path = projectDiabloTempSettings.classic_game_settings.other.save_path + "\\";
+	}
+	
     await writeTextFile({
       path: `${path}\\${PROJECT_DIABLO_SETTINGS_STRING}`,
       contents: JSON.stringify(projectDiabloTempSettings),

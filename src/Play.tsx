@@ -1,13 +1,14 @@
 import { Command } from "@tauri-apps/api/shell";
 import { message } from "@tauri-apps/api/dialog";
 import { readTextFile } from "@tauri-apps/api/fs";
-import { DLL_STRING, JSON_STRING, MPQ_STRING, PLUGY_STRING, LAUNCHER_SETTINGS_STRING } from "./constants";
+import { DLL_STRING, JSON_STRING, MPQ_STRING, PLUGY_STRING, LAUNCHER_SETTINGS_STRING, DIABLO2_STRING, PROJECTD2_STRING } from "./constants";
 import { checkIfFileExists } from "./util/checkIfFileExists";
 import { Json, LauncherSettings } from "./types";
 import { downloadAllFiles } from "./util/downloadAll";
 import { fixedResourcePath } from "./util/fixedResourcePath";
 import { Loader } from "@mantine/core";
 import { calculateChecksum } from "./util/calculateChecksum";
+import { invoke } from '@tauri-apps/api/tauri'
 
 type PlayType = {
   latestJson: Json | null | undefined;
@@ -43,15 +44,31 @@ export default function Play({
     const mpqExists = await checkIfFileExists(MPQ_STRING);
     const plugyExists = await checkIfFileExists(PLUGY_STRING);
     const localJsonExists = await checkIfFileExists(JSON_STRING);
+	const diablo2ExeExists = await checkIfFileExists(DIABLO2_STRING);
 	const currentChecksum = await calculateChecksum(MPQ_STRING);
+	let validDirectory = false;
+	
+	invoke('get_exe_path').then(function(value) {
+		if(!(value as string).endsWith(PROJECTD2_STRING)) {
+			message(`This launcher has to be installed in ${PROJECTD2_STRING} folder in your Diablo 2 directory.`,
+			{ title: "Error", type: "error" });
+		} else if((value as string).endsWith(PROJECTD2_STRING)) {
+			validDirectory = true;
+		}
+		return;
+	});	
 
-    if (launcherSettings.isPlugy && !plugyExists) {
+    if (validDirectory && launcherSettings.isPlugy && !plugyExists) {
       await message(
         `${PLUGY_STRING} not found. \n\nMake sure this launcher is installed in the same folder as ${PLUGY_STRING}.`,
         { title: "Error", type: "error" }
       );
       return;
-    }
+    } else if (!launcherSettings.isPlugy && !diablo2ExeExists) {
+		await message(`${DIABLO2_STRING} not found. \n\nMake sure this launcher is installed in the same folder as ${DIABLO2_STRING}.`,
+        { title: "Error", type: "error" });
+	  return;
+	}
 
     if (localJsonExists) await readLocalJson();
 

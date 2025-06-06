@@ -17,4 +17,6 @@ export const JSON_STRING = "pd2-single-player-plus.json";
 export const LAUNCHER_SETTINGS_STRING = "pd2-single-player-plus-launcher.json";
 export const MPQ_STRING = "pd2data.mpq";
 export const PLUGY_STRING = "PlugY.exe";
+export const DIABLO2_STRING = "Diablo II.exe";
+export const PROJECTD2_STRING = "ProjectD2";
 export const PROJECT_DIABLO_SETTINGS_STRING = "ProjectDiablo.json";
