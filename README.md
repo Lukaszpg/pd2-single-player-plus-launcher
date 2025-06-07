@@ -37,7 +37,7 @@ b) Without PlugY:
 
 
 1. Copy your Diablo 2 game with Project Diablo 2 mod installed to a new directory.
-2. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher) of PD2 Single Player+ launcher.
+2. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher/releases/latest) of PD2 Single Player+ launcher.
 3. Install the launcher downloaded in step 3 in the `ProjectD2` folder in your Diablo 2 game directory.
 4. Run `PD2 Single Player+ Launcher.exe` as Administrator.
 5. Adjust the path where do you want your single player characters and stash to be stored.
