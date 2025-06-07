@@ -26,7 +26,7 @@ a) With PlugY:
    **WARNING - The materials tab introduced in season 11 will not work with Plugy!**
    
 	2a. If you already have Plugy installed and played previous versions of this mod, please remove the contents of shared stash and create a new character.
-3. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher) of PD2 Single Player+ launcher.
+3. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher/releases/latest) of PD2 Single Player+ launcher.
 4. Install the launcher downloaded in step 3 in the `ProjectD2` folder in your Diablo 2 directory.
 6. Run `PD2 Single Player+ Launcher.exe` as Administrator.
 7. **IMPORTANT!** Click settings in the launcher in the top left corner and check the `Play with PlugY` checkbox. Adjust the path where do you want your single player characters and stash to be stored.
