@@ -7,8 +7,24 @@ export type LauncherJson = {
   sublinks: Sublink[];
 };
 
+/** A game command line argument that can be toggled in the launcher settings. */
+export type LaunchArgument = {
+  /** The argument itself, e.g. "-direct". */
+  value: string;
+  /** Short label shown next to the checkbox. */
+  label: string;
+  /** Explanation of what the argument does. */
+  description: string;
+};
+
 export type LauncherSettings = {
   isPlugy: boolean;
+  /** Folder that contains the game (Diablo II.exe / PlugY.exe). Empty means the launcher folder. */
+  gamePath: string;
+  /** Extra game command line arguments enabled in the settings. */
+  launchArgs: string[];
+  /** Free form command line arguments typed in by the user. */
+  customArgs: string;
 };
 
 export type Json = {

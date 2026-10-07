@@ -1,14 +1,14 @@
-import { Command } from "@tauri-apps/api/shell";
 import { message } from "@tauri-apps/api/dialog";
-import { readTextFile } from "@tauri-apps/api/fs";
-import { DLL_STRING, JSON_STRING, MPQ_STRING, PLUGY_STRING, LAUNCHER_SETTINGS_STRING, DIABLO2_STRING, PROJECTD2_STRING } from "./constants";
+import { DLL_STRING, JSON_STRING, MPQ_STRING, PLUGY_STRING, DIABLO2_STRING } from "./constants";
 import { checkIfFileExists } from "./util/checkIfFileExists";
 import { Json, LauncherSettings } from "./types";
 import { downloadAllFiles } from "./util/downloadAll";
-import { fixedResourcePath } from "./util/fixedResourcePath";
 import { Loader } from "@mantine/core";
 import { calculateChecksum } from "./util/calculateChecksum";
 import { invoke } from '@tauri-apps/api/tauri'
+import { buildLaunchArgs } from "./util/launchArgs";
+import { readLauncherSettings } from "./util/launcherSettings";
+import { gameDirectory, setGameDirectory } from "./util/gamePath";
 
 type PlayType = {
   latestJson: Json | null | undefined;
@@ -25,50 +25,44 @@ export default function Play({
   setIsDownloading,
   readLocalJson
 }: PlayType) {
-	
-	const readLauncherSettings = async () => {
-	const path = await fixedResourcePath();
-	const launcherSettings: LauncherSettings = JSON.parse(
-	  await readTextFile(`${path}\\${LAUNCHER_SETTINGS_STRING}`)
-	);
 
-	return launcherSettings;
-	};
-  
-  const playPlugy = new Command("PlugY", ["-plugy"]);
-  const notPlugy = new Command("NotPlugy", ["-3dfx"]);
+  const startGame = async (launcherSettings: LauncherSettings) => {
+    const directory = await gameDirectory();
+    // PlugY and the plain game executable are started by the Rust side so the
+    // launcher can live anywhere and still launch the configured game folder.
+    const exe = launcherSettings.isPlugy ? PLUGY_STRING : DIABLO2_STRING;
+    const args = buildLaunchArgs(launcherSettings);
+
+    try {
+      await invoke("launch_game", { dir: directory, exe, args });
+    } catch (error) {
+      await message(
+        `The game could not be started.\n\nDirectory: ${directory}\nCommand: ${exe} ${args.join(" ")}\n\n${error}`,
+        { title: "Error", type: "error" }
+      );
+    }
+  };
 
   const onPlay = async () => {
-	const launcherSettings = await readLauncherSettings();
-    const dllExists = await checkIfFileExists(DLL_STRING);
-    const mpqExists = await checkIfFileExists(MPQ_STRING);
-    const plugyExists = await checkIfFileExists(PLUGY_STRING);
-    const localJsonExists = await checkIfFileExists(JSON_STRING);
-	const diablo2ExeExists = await checkIfFileExists(DIABLO2_STRING);
-	const currentChecksum = await calculateChecksum(MPQ_STRING);
-	let validDirectory = false;
-	
-	invoke('get_exe_path').then(function(value) {
-		if(!(value as string).endsWith(PROJECTD2_STRING)) {
-			message(`This launcher has to be installed in ${PROJECTD2_STRING} folder in your Diablo 2 directory.`,
-			{ title: "Error", type: "error" });
-		} else if((value as string).endsWith(PROJECTD2_STRING)) {
-			validDirectory = true;
-		}
-		return;
-	});	
+    const launcherSettings = await readLauncherSettings();
+    setGameDirectory(launcherSettings.gamePath);
+    const directory = await gameDirectory();
+    const gameExe = launcherSettings.isPlugy ? PLUGY_STRING : DIABLO2_STRING;
 
-    if (validDirectory && launcherSettings.isPlugy && !plugyExists) {
+    if (!(await checkIfFileExists(gameExe))) {
       await message(
-        `${PLUGY_STRING} not found. \n\nMake sure this launcher is installed in the same folder as ${PLUGY_STRING}.`,
+        `${gameExe} was not found in:\n${directory}\n\n` +
+          `Put the launcher into your game folder (the one with ${DIABLO2_STRING}) ` +
+          `or set the game directory in the settings.`,
         { title: "Error", type: "error" }
       );
       return;
-    } else if (!launcherSettings.isPlugy && !diablo2ExeExists) {
-		await message(`${DIABLO2_STRING} not found. \n\nMake sure this launcher is installed in the same folder as ${DIABLO2_STRING}.`,
-        { title: "Error", type: "error" });
-	  return;
-	}
+    }
+
+    const dllExists = await checkIfFileExists(DLL_STRING);
+    const mpqExists = await checkIfFileExists(MPQ_STRING);
+    const localJsonExists = await checkIfFileExists(JSON_STRING);
+    const currentChecksum = await calculateChecksum(MPQ_STRING);
 
     if (localJsonExists) await readLocalJson();
 
@@ -79,21 +73,13 @@ export default function Play({
       localJson?.version === latestJson?.version &&
 	  currentChecksum === latestJson?.dataChecksum
     ) {
-	  if(launcherSettings.isPlugy) {
-        playPlugy.execute();
-	  } else {
-		notPlugy.execute();
-	  }
+      await startGame(launcherSettings);
     } else {
       setIsDownloading(true);
       await downloadAllFiles();
       setIsDownloading(false);
 
-      if(launcherSettings.isPlugy) {
-        playPlugy.execute();
-	  } else {
-		notPlugy.execute();
-	  }
+      await startGame(launcherSettings);
     }
   };
 

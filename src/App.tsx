@@ -7,26 +7,28 @@ import Sublink from "./components/Sublink";
 import Play from "./Play";
 import { getVersion } from "@tauri-apps/api/app";
 import {
+  DEFAULT_LAUNCHER_SETTINGS,
   JSON_STRING,
   JSON_URL,
   LAUNCHER_JSON_URL,
-  LAUNCHER_SETTINGS_STRING
 } from "./constants";
 import Settings from "./components/Settings";
 import { MantineProvider } from "@mantine/core";
 import { useDisclosure, useFetch } from "@mantine/hooks";
 import SettingsModal from "./components/SettingsModal";
 import { Json, LauncherJson, LauncherSettings } from "./types";
-import { exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import { readTextFile } from "@tauri-apps/api/fs";
 import { checkIfFileExists } from "./util/checkIfFileExists";
 import { downloadAllFiles } from "./util/downloadAll";
-import { fixedResourcePath } from "./util/fixedResourcePath";
+import { readLauncherSettings } from "./util/launcherSettings";
+import { gameDirectory, setGameDirectory } from "./util/gamePath";
 
 function App() {
   const [opened, { open, close }] = useDisclosure(false);
   const [localJson, setLocalJson] = useState<Json | null>();
   const [launcherSettings, setLauncherSettings] = useState<LauncherSettings>({
-    isPlugy: false
+    ...DEFAULT_LAUNCHER_SETTINGS,
+    launchArgs: [],
   });
   const [isDownloading, setIsDownloading] = useState(false);
   const [appVersion, setAppVersion] = useState("");
@@ -34,31 +36,8 @@ function App() {
   const { data: latestJsonData } = useFetch<Json>(JSON_URL);
   const { data: launcherJsonData } = useFetch<LauncherJson>(LAUNCHER_JSON_URL);
 
-  const readLauncherSettings = async () => {
-    const path = await fixedResourcePath();
-    const launcherSettingsExists = await exists(
-      `${path}\\${LAUNCHER_SETTINGS_STRING}`
-    );
-
-    const newLauncherSettings: LauncherSettings = {
-      isPlugy: false
-    };
-
-    if (launcherSettingsExists) {
-      const readLauncherSettings: LauncherSettings = JSON.parse(
-        await readTextFile(`${path}\\${LAUNCHER_SETTINGS_STRING}`)
-      );
-      setLauncherSettings(readLauncherSettings);
-    } else {
-      await writeTextFile({
-        path: `${path}\\${LAUNCHER_SETTINGS_STRING}`,
-        contents: JSON.stringify(newLauncherSettings),
-      });
-    }
-  };
-
   const readLocalJson = async () => {
-    const path = await fixedResourcePath();
+    const path = await gameDirectory();
     const readLocalJson: Json = JSON.parse(
       await readTextFile(`${path}\\${JSON_STRING}`)
     );
@@ -80,6 +59,13 @@ function App() {
 
     (async () => {
       const appVersion = await getVersion();
+
+      // The game directory decides where the mod files live, so it has to be
+      // known before anything is read or downloaded.
+      const launcherSettings = await readLauncherSettings();
+      setGameDirectory(launcherSettings.gamePath);
+      setLauncherSettings(launcherSettings);
+
       const localJsonExists = await checkIfFileExists(JSON_STRING);
 
       if (localJsonExists) {
@@ -90,7 +76,6 @@ function App() {
         setIsDownloading(false);
       }
 
-      await readLauncherSettings();
       setAppVersion(appVersion);
     })();
   }, [latestJsonData, launcherJsonData]);

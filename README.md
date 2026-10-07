@@ -27,7 +27,7 @@ a) With PlugY:
    
 	2a. If you already have Plugy installed and played previous versions of this mod, please remove the contents of shared stash and create a new character.
 3. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher/releases/latest) of PD2 Sanctuary of Exile launcher.
-4. Install the launcher downloaded in step 3 in the `ProjectD2` folder in your Diablo 2 directory.
+4. Install the launcher downloaded in step 3 into your game folder (the folder that contains `Diablo II.exe`, usually `ProjectD2`). If you install it somewhere else, select the game folder in `Settings` -> `Game directory`.
 5. Run **VANILLA PD2 LAUNCHER AT LEAST ONCE**. Click play and then exit the game.
 6. Run `PD2 Single Player+ Launcher.exe` as Administrator.
 7. **IMPORTANT!** Click settings in the launcher in the top left corner and check the `Use PlugY` checkbox.
@@ -40,13 +40,35 @@ b) Without PlugY:
 
 1. Copy your Diablo 2 game with Project Diablo 2 mod installed to a new directory.
 2. Download the [Latest Release](https://github.com/Lukaszpg/pd2-single-player-plus-launcher/releases/latest)  of PD2 Sanctuary of Exile launcher.
-3. Install the launcher downloaded in step 3 in the `ProjectD2` folder in your Diablo 2 game directory.
+3. Install the launcher downloaded in step 2 into your game folder (the folder that contains `Diablo II.exe`, usually `ProjectD2`). If you install it somewhere else, select the game folder in `Settings` -> `Game directory`.
 4. Run **VANILLA PD2 LAUNCHER AT LEAST ONCE**. Click play and then exit the game.
 6. Run `PD2 Single Player+ Launcher.exe` as Administrator.
 6. Adjust the path to your PD2 Single player directory from step 1 in "Project Diablo II Installation Directory".
 7. Adjust the path where do you want your single player characters and stash to be stored in "Save Folder Directory".
 8. Save the settings. Click play button.
 9. Head to Akara and look for an item with Alkor's quest potion graphics. If it's there, mod was installed successfully. GLHF!
+
+## Game directory
+
+The launcher reads and writes the mod files (`pd2data.mpq`, `BH.dll`, `pd2-single-player-plus.json`, `ProjectDiablo.json`) inside the game directory and starts `Diablo II.exe` (or `PlugY.exe` when `Play with PlugY` is checked) from that folder.
+
+By default the game directory is the folder the launcher itself is installed in, so putting `PD2 Single Player+ Launcher.exe` next to `Diablo II.exe` works out of the box. If the launcher lives somewhere else, select the game folder in `Settings` -> `Game directory`; the line under the button shows which of `Diablo II.exe` / `PlugY.exe` were found there.
+
+## Launch arguments
+
+The launcher always passes the argument of the selected mode: `-plugy` when `Play with PlugY` is checked, `-3dfx` otherwise. Additional arguments can be enabled in `Settings` -> `Launch options`:
+
+| Argument | Description |
+| --- | --- |
+| `-direct` | Load game data from the `data` folder instead of the MPQ archives. |
+| `-txt` | Load `.txt` data files, usually used together with `-direct`. |
+| `-3dfx` | Use the Glide (3dfx) renderer. |
+| `-skiptobnet` | Skip the Battle.net menu and go straight into single player. |
+| `-w` | Run the game in windowed mode. |
+| `-ns` | Start the game without sound. |
+| `-lq` | Force low quality graphics. |
+
+Anything else can be typed into the `Custom arguments` field, separated by spaces. Use quotes for values containing spaces, for example `-mpq "C:\my data\pd2data.mpq"`. Every argument is only passed once, so checking `-3dfx` while playing without PlugY does not pass it twice. The arguments are stored in `pd2-single-player-plus-launcher.json` next to the launcher.
 
 ## Troubleshooting
 

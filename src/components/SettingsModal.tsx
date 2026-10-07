@@ -3,19 +3,28 @@ import {
   CSSProperties,
   Checkbox,
   Modal,
+  Stack,
   TextInput,
   Group,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { LauncherSettings, ProjectDiabloSettings } from "../types";
-import { readTextFile, writeTextFile } from "@tauri-apps/api/fs";
+import { exists, readTextFile, writeTextFile } from "@tauri-apps/api/fs";
 import {
-  LAUNCHER_SETTINGS_STRING,
+  COMMON_LAUNCH_ARGS,
+  DEFAULT_LAUNCHER_SETTINGS,
+  DIABLO2_STRING,
+  PLUGY_STRING,
   PROJECT_DIABLO_SETTINGS_STRING,
 } from "../constants";
 import { fixedResourcePath } from "../util/fixedResourcePath";
+import { gameDirectory, setGameDirectory } from "../util/gamePath";
 import { downloadAllFiles } from "../util/downloadAll";
 import { open } from "@tauri-apps/api/dialog";
+import {
+  readLauncherSettings,
+  writeLauncherSettings,
+} from "../util/launcherSettings";
 
 type SettingsModalType = {
   opened: boolean;
@@ -33,6 +42,13 @@ const modalHeader: CSSProperties = {
   backgroundColor: "#0a0a0a",
 };
 
+const whiteLabel = { color: "white" };
+const greyDescription = { color: "#9ca3af" };
+const darkInput = { color: "white", backgroundColor: "#1a1a1a" };
+
+const customArgsDescription =
+  'Any other arguments, separated by spaces. Use quotes for values containing spaces, e.g. -mpq "C:\\my data\\pd2data.mpq"';
+
 const checkboxDescription = (
   <div>
     <p className="mt-2">
@@ -44,8 +60,10 @@ const checkboxDescription = (
 
 function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
   const [tempSettings, setTempSettings] = useState<LauncherSettings>({
-    isPlugy: false
+    ...DEFAULT_LAUNCHER_SETTINGS,
+    launchArgs: [],
   });
+  const [gamePathStatus, setGamePathStatus] = useState("Checking...");
   const [projectDiabloTempSettings, setProjectDiabloTempSettings] =
     useState<ProjectDiabloSettings>({
       classic_game_settings: {
@@ -103,17 +121,8 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
       },
     });
 
-  const readLauncherSettings = async () => {
-    const path = await fixedResourcePath();
-    const launcherSettings: LauncherSettings = JSON.parse(
-      await readTextFile(`${path}\\${LAUNCHER_SETTINGS_STRING}`)
-    );
-
-    return launcherSettings;
-  };
-
   const readProjectDiabloSettings = async () => {
-    const path = await fixedResourcePath();
+    const path = await gameDirectory();
     const text: ProjectDiabloSettings = JSON.parse(
       await readTextFile(`${path}\\${PROJECT_DIABLO_SETTINGS_STRING}`)
     );
@@ -130,11 +139,18 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
   };
 
   const onSave = async () => {
-    const path = await fixedResourcePath();
-    await writeTextFile({
-      path: `${path}\\${LAUNCHER_SETTINGS_STRING}`,
-      contents: JSON.stringify(tempSettings),
-    });
+    const settingsToSave: LauncherSettings = {
+      ...tempSettings,
+      gamePath: tempSettings.gamePath.trim(),
+      customArgs: tempSettings.customArgs.trim(),
+    };
+
+    await writeLauncherSettings(settingsToSave);
+
+    // Everything below belongs to the game folder, so apply the new location
+    // before writing the game settings.
+    setGameDirectory(settingsToSave.gamePath);
+    const path = await gameDirectory();
 	
 	//Fix for invalid save path
 	if(projectDiabloTempSettings.classic_game_settings.other.save_path.substr(projectDiabloTempSettings.classic_game_settings.other.save_path.length - 1) !== "\\") {
@@ -173,6 +189,24 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
       }));
   };
 
+  const changeGamePath = async () => {
+    const selected = await open({
+      directory: true,
+      multiple: false,
+      defaultPath: tempSettings.gamePath || (await fixedResourcePath()),
+    });
+
+    if (selected)
+      setTempSettings((current) => ({
+        ...current,
+        gamePath: selected as string,
+      }));
+  };
+
+  const useLauncherFolder = () => {
+    setTempSettings((current) => ({ ...current, gamePath: "" }));
+  };
+
   useEffect(() => {
     (async () => {
       const launcherSettings = await readLauncherSettings();
@@ -182,6 +216,22 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const directory = tempSettings.gamePath.trim() || (await fixedResourcePath());
+      const found: string[] = [];
+
+      if (await exists(`${directory}\\${DIABLO2_STRING}`)) found.push(DIABLO2_STRING);
+      if (await exists(`${directory}\\${PLUGY_STRING}`)) found.push(PLUGY_STRING);
+
+      setGamePathStatus(
+        found.length > 0
+          ? `${directory} — found ${found.join(", ")}`
+          : `${directory} — no ${DIABLO2_STRING} or ${PLUGY_STRING} found`
+      );
+    })();
+  }, [tempSettings.gamePath]);
+
   return (
     <Modal
       opened={opened}
@@ -190,7 +240,7 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
       centered
       size="70%"
       styles={{
-        content: modalContent,
+        content: { ...modalContent, maxHeight: "85vh", overflowY: "auto" },
         header: modalHeader,
       }}
       overlayProps={{
@@ -201,17 +251,80 @@ function SettingsModal({ opened, close, setIsDownloading }: SettingsModalType) {
 	<Checkbox
         checked={tempSettings.isPlugy}
         onChange={(e) =>
-          setTempSettings({ isPlugy: e.currentTarget.checked })
+          setTempSettings((current) => ({
+            ...current,
+            isPlugy: e.currentTarget.checked,
+          }))
         }
         label="Play with PlugY"
-		styles={{ label: { color: 'white' } }}
+		styles={{ label: whiteLabel }}
         description={checkboxDescription}
+      />
+      <TextInput
+        mt="md"
+        label="Game directory"
+        description="Folder that contains Diablo II.exe (and PlugY.exe when playing with PlugY). Leave empty to use the folder the launcher is installed in."
+        placeholder="Launcher folder"
+        value={tempSettings.gamePath}
+        onChange={(event) =>
+          setTempSettings((current) => ({
+            ...current,
+            gamePath: event.currentTarget.value,
+          }))
+        }
+        styles={{ label: whiteLabel, description: greyDescription, input: darkInput }}
+      />
+      <Group mt="8px">
+        <Button onClick={changeGamePath}>Change Game Directory</Button>
+        <Button variant="default" onClick={useLauncherFolder}>
+          Use Launcher Folder
+        </Button>
+      </Group>
+      <p className="mt-2 mb-0 text-xs" style={{ color: "#9ca3af" }}>
+        {gamePathStatus}
+      </p>
+      <Checkbox.Group
+        mt="lg"
+        label="Launch options"
+        description="Extra arguments passed to the game on launch. -plugy is used with PlugY, -3dfx without it."
+        value={tempSettings.launchArgs}
+        onChange={(launchArgs) =>
+          setTempSettings((current) => ({ ...current, launchArgs }))
+        }
+        styles={{ label: whiteLabel, description: greyDescription }}
+      >
+        <Stack mt="xs" gap="xs">
+          {COMMON_LAUNCH_ARGS.map((argument) => (
+            <Checkbox
+              key={argument.value}
+              value={argument.value}
+              label={argument.label}
+              description={argument.description}
+              styles={{ label: whiteLabel, description: greyDescription }}
+            />
+          ))}
+        </Stack>
+      </Checkbox.Group>
+      <TextInput
+        mt="md"
+        label="Custom arguments"
+        description={customArgsDescription}
+        placeholder="-direct -txt -w"
+        value={tempSettings.customArgs}
+        onChange={(event) =>
+          setTempSettings((current) => ({
+            ...current,
+            customArgs: event.currentTarget.value,
+          }))
+        }
+        styles={{ label: whiteLabel, description: greyDescription, input: darkInput }}
       />
       <TextInput
         mt="md"
         label="Save Path"
         description="The directory that your characters and stash saves are located"
         value={projectDiabloTempSettings?.classic_game_settings.other.save_path}
+        styles={{ label: whiteLabel, description: greyDescription }}
         disabled
       />
 	  <Button mt="8px" onClick={changeSavePath}>

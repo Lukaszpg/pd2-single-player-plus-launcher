@@ -6,10 +6,10 @@ import {
   LATEST_RELEASE_URL,
   MPQ_STRING,
 } from "../constants";
-import { fixedResourcePath } from "./fixedResourcePath";
+import { gameDirectory } from "./gamePath";
 
 export const downloadAllFiles = async () => {
-  const path = await fixedResourcePath();
+  const path = await gameDirectory();
 
   await download(
 	`${LATEST_RELEASE_URL}/${MPQ_STRING}`,

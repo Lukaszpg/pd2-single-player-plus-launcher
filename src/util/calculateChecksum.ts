@@ -1,10 +1,13 @@
-import { fixedResourcePath } from "./fixedResourcePath";
+import { gameDirectory } from "./gamePath";
 import { readBinaryFile } from "@tauri-apps/api/fs";
 
 export async function calculateChecksum(fileName: string) {
-	const path = await fixedResourcePath();
+	const path = await gameDirectory();
 	const contents = await readBinaryFile(`${path}\\${fileName}`);
-	const hashAsArrayBuffer = await crypto.subtle.digest("SHA-256", contents);
+	const hashAsArrayBuffer = await crypto.subtle.digest(
+		"SHA-256",
+		new Uint8Array(contents).buffer
+	);
 
 	const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
 	const hashAsString = Array.from(uint8ViewOfHash)
